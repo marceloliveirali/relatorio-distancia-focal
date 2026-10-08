@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Distância focal de lente convergente — relatório interativo</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f0f0f0;color:#111}
+header{background:#1F3864;color:#fff;padding:10px 16px}
+header h1{margin:0;font-size:21px} header p{margin:4px 0 0;font-size:12.5px}
+main{display:flex;gap:12px;padding:12px;align-items:flex-start}
+#ctl{width:290px;background:#fff;padding:10px;border:1px solid #bbb;flex:none}
+#ctl label{display:block;font-weight:bold;font-size:13px;margin-top:9px}
+#ctl input[type=number],#ctl select{width:100%;box-sizing:border-box;padding:5px;font-size:13px}
+#fnom{background:#ffff99}
+#out{flex:1;min-width:0}
+pre{background:#fff;border:1px solid #bbb;padding:10px;font-size:12.5px;overflow:auto;white-space:pre-wrap;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(460px,1fr));gap:10px;margin-bottom:10px}
+canvas{background:#fff;border:1px solid #888;width:100%;height:auto}
+table{border-collapse:collapse;background:#fff;font-size:12px;width:100%}
+th,td{border:1px solid #bbb;padding:3px 6px;text-align:center}
+th{background:#D9E1F2}
+td input[type=number]{width:84px;padding:2px}
+tr.off td{color:#999}
+button{padding:7px 10px;margin:4px 0;width:100%;cursor:pointer;font-size:13px}
+.nota{font-size:11.5px;color:#444;margin-top:8px}
+.sec{margin:14px 0 6px;font-size:18px;color:#1F3864;border-bottom:2px solid #1F3864}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-bottom:10px}
+.card{background:#fff;border:1px solid #bbb;padding:10px;font-size:12.5px}
+.card h3{margin:4px 0;font-size:15px}.card svg{width:100%;max-width:150px;height:auto;display:block;margin:0 auto 4px}
+.card button{width:auto;padding:5px 9px}
+#simbox{background:#fff;border:1px solid #888;padding:8px;margin-bottom:10px}
+#simbox .lin{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font-size:13px}
+#simbox .lin button{width:auto;margin:0;padding:5px 10px}
+#simbox input[type=range]{flex:1;min-width:220px}
+#simout{font-size:13px;line-height:1.5;background:#FFF3E0;border:1px solid #E07A3C;padding:6px 10px;margin-top:6px}
+@media print{#ctl,.noprint{display:none}main{display:block}body{background:#fff}}
+</style></head><body>
+<header><h1>Distância focal de lente convergente — relatório interativo</h1>
+<p>Alunos: Marcelo de Oliveira Lima e Marcelo Lago &nbsp;|&nbsp; Licenciatura em Física IFBA/UAB — Física Clássica da Matéria e da Luz (FIS215) &nbsp;|&nbsp; 08/10/2026</p></header>
+<main>
+<div id="ctl">
+<label>Configuração exibida</label>
+<select id="cfg"><option>Todos</option><option>do &gt; di</option><option>do &lt; di</option></select>
+<label>σ de leitura (mm)</label><input type="number" id="sig" value="1" step="0.1" min="0.01">
+<label>f nominal da lente (m)</label><input type="number" id="fnom" step="0.001" min="0" value="0.125"><p class="nota" style="margin-top:3px">Duas lentes convergentes de f = 0,25 m juntas: 1/f = 1/0,25 + 1/0,25 → f = 0,125 m.</p>
+<button id="add">+ Adicionar ponto</button>
+<button id="rst">Restaurar dados originais</button>
+<button id="prt">Imprimir / Salvar em PDF</button>
+<p class="nota">Edite do e di na tabela, marque/desmarque “Usar” e mude a configuração: resultados e gráficos se recalculam na hora. Distâncias em metros.</p>
+</div>
+<div id="out">
+<pre id="txt"></pre>
+<div class="grid">
+<canvas id="c1"></canvas><canvas id="c2"></canvas><canvas id="c3"></canvas><canvas id="c4"></canvas>
+</div>
+<h2 class="sec">Aplicações do experimento — a mesma lente, dois usos</h2>
+<div class="cards">
+<div class="card"><svg viewBox="0 0 120 80"><rect x="8" y="22" width="104" height="52" rx="8" fill="#333"/><rect x="38" y="12" width="34" height="14" rx="3" fill="#333"/><rect x="88" y="26" width="16" height="9" fill="#ddd"/><circle cx="56" cy="48" r="23" fill="#666" stroke="#111" stroke-width="3"/><circle cx="56" cy="48" r="14" fill="#9cc7e8" stroke="#111" stroke-width="2"/><circle cx="51" cy="43" r="4" fill="#fff" opacity=".7"/></svg>
+<h3>Máquina fotográfica</h3><p><b>Objeto longe da lente</b> (do &gt; 2f). A imagem é <b>real, invertida e reduzida</b> e se forma logo depois do foco (di ≈ f), onde fica o <b>sensor</b> (o anteparo do experimento). Para focalizar, a lente se afasta ou se aproxima do sensor.</p>
+<p>Com f = 0,125 m e do = 1,00 m: di ≈ 0,143 m e ampliação ≈ −0,14.</p>
+<p>No experimento, são os pontos de <b>do &gt; di</b> (do de 0,325 a 0,560 m).</p><button class="pre" data-do="1.0">▶ Ver no simulador</button></div>
+<div class="card"><svg viewBox="0 0 120 80"><polygon points="62,40 112,8 112,72" fill="#FFE98A" opacity=".8"/><rect x="108" y="6" width="8" height="68" fill="#fff" stroke="#333" stroke-width="2"/><rect x="6" y="28" width="52" height="40" rx="5" fill="#333"/><circle cx="22" cy="22" r="11" fill="#666" stroke="#111" stroke-width="2"/><circle cx="44" cy="22" r="11" fill="#666" stroke="#111" stroke-width="2"/><rect x="56" y="38" width="12" height="14" fill="#555" stroke="#111" stroke-width="2"/></svg>
+<h3>Projetor de cinema / slides</h3><p><b>Filme próximo do foco</b> (f &lt; do &lt; 2f). A imagem é <b>real, invertida e muito ampliada</b> e se forma longe (di grande), na <b>tela</b>. Por isso o filme é colocado de cabeça para baixo.</p>
+<p>Com f = 0,125 m e do = 0,14 m: di ≈ 1,17 m e ampliação ≈ −8,3.</p>
+<p>No experimento, são os pontos de <b>do &lt; di</b> (do de 0,150 a 0,189 m).</p><button class="pre" data-do="0.14">▶ Ver no simulador</button></div>
+<div class="card"><svg viewBox="0 0 120 80"><circle cx="48" cy="38" r="26" fill="#cfe8f7" stroke="#333" stroke-width="5"/><line x1="67" y1="57" x2="108" y2="76" stroke="#6b4a2b" stroke-width="9" stroke-linecap="round"/></svg>
+<h3>Outros usos</h3><p><b>Cópia 1:1</b> (copiadora, scanner): com do = 2f a imagem tem o mesmo tamanho (di = 2f). <b>Lupa</b>: com do &lt; f a imagem é virtual, direita e ampliada.</p>
+<button class="pre" data-do="0.25">do = 2f</button> <button class="pre" data-do="0.08">Lupa (do &lt; f)</button></div>
+</div>
+<div id="simbox"><div class="lin"><b>Simulador da lente:</b>
+<span>do = <b id="dov">1,000</b> m</span><input type="range" id="dosl" min="0.06" max="1.2" step="0.002" value="1">
+<button id="play">▶ Varrer</button></div>
+<canvas id="c5"></canvas><div id="simout"></div></div>
+<table id="tb"><thead><tr><th>Nº</th><th>Usar</th><th>do (m)</th><th>di (m)</th><th>1/do</th><th>1/di</th><th>f_i (m)</th><th>Config.</th><th>Resíduo</th><th class="noprint"></th></tr></thead><tbody></tbody></table>
+</div></main>
+<script>
+const ALUNOS="Marcelo de Oliveira Lima e Marcelo Lago", INIT=[{"do": 0.56, "di": 0.163, "usar": true}, {"do": 0.519, "di": 0.166, "usar": true}, {"do": 0.473, "di": 0.172, "usar": true}, {"do": 0.429, "di": 0.176, "usar": true}, {"do": 0.38, "di": 0.185, "usar": true}, {"do": 0.325, "di": 0.198, "usar": true}, {"do": 0.15, "di": 0.573, "usar": true}, {"do": 0.153, "di": 0.532, "usar": true}, {"do": 0.16, "di": 0.485, "usar": true}, {"do": 0.165, "di": 0.44, "usar": true}, {"do": 0.177, "di": 0.388, "usar": true}, {"do": 0.189, "di": 0.336, "usar": true}];
+//CALC_START
+const T95={1:12.706,2:4.303,3:3.182,4:2.776,5:2.571,6:2.447,7:2.365,8:2.306,9:2.262,10:2.228,11:2.201,12:2.179,13:2.160,14:2.145,15:2.131,16:2.120,17:2.110,18:2.101,19:2.093,20:2.086,25:2.060,30:2.042};
+function tcrit(df){if(df<1)return NaN;const ks=Object.keys(T95).map(Number).sort((a,b)=>a-b);for(const k of ks){if(df<=k)return T95[k];}return 1.96;}
+function calc(rows,cfg,sig,fnom){
+ const o={rows,cfg,sig,fnom,ok:false};
+ o.x=rows.map(r=>1/r.do);o.y=rows.map(r=>1/r.di);o.fi=o.x.map((x,i)=>1/(x+o.y[i]));
+ o.g=rows.map(r=>r.do>r.di?'do > di':'do < di');
+ o.at=rows.map((r,i)=>!!r.usar&&r.do>0&&r.di>0&&(cfg==='Todos'||o.g[i]===cfg));
+ const id=[];o.at.forEach((a,i)=>{if(a)id.push(i)});const n=id.length;o.n=n;if(n<3)return o;
+ const xs=id.map(i=>o.x[i]),ys=id.map(i=>o.y[i]);
+ const sum=a=>a.reduce((p,c)=>p+c,0);
+ const sx=sum(xs),sy=sum(ys);
+ const sxx=sum(xs.map(v=>v*v))-sx*sx/n,syy=sum(ys.map(v=>v*v))-sy*sy/n,sxy=sum(xs.map((v,i)=>v*ys[i]))-sx*sy/n;
+ const a=sxy/sxx,b=(sy-a*sx)/n,r2=sxy*sxy/(sxx*syy);
+ const sres=Math.sqrt(Math.max(syy-a*sxy,0)/(n-2)),xm=sx/n;
+ const sa=sres/Math.sqrt(sxx),sb=sres*Math.sqrt(1/n+xm*xm/sxx),cov=-xm*sa*sa;
+ const f1=1/b,u1=sb/(b*b),f2=-a/b,u2=Math.abs(f2)*Math.sqrt(Math.pow(sa/a,2)+Math.pow(sb/b,2)-2*cov/(a*b));
+ const fm=(f1+f2)/2,fs=Math.abs(f1-f2)/Math.SQRT2;
+ const compat=Math.abs(f1-f2)<=2*Math.sqrt(u1*u1+u2*u2);
+ const fa=id.map(i=>o.fi[i]),fbar=sum(fa)/n,s=Math.sqrt(sum(fa.map(v=>(v-fbar)*(v-fbar)))/(n-1)),sm=s/Math.sqrt(n),t=tcrit(n-1);
+ const sg=sig/1000;
+ const sinst=sum(id.map(i=>{const f=o.fi[i],d0=rows[i].do,d1=rows[i].di;return f*f*Math.sqrt(Math.pow(sg/(d0*d0),2)+Math.pow(sg/(d1*d1),2));}))/n;
+ Object.assign(o,{ok:true,a,b,r2,sres,sa,sb,cov,f1,u1,f2,u2,fm,fs,compat,fbar,s,cv:s/fbar*100,sm,t,U:t*sm,sinst,razao:s/sinst});
+ o.res=o.x.map((x,i)=>o.y[i]-(a*x+b));
+ if(fnom>0){o.es=fbar-fnom;o.esr=(fbar-fnom)/fnom*100;}
+ o.grupos={};
+ for(const k of ['do > di','do < di']){const ii=id.filter(i=>o.g[i]===k);if(ii.length>=2){const v=ii.map(i=>o.fi[i]),m=sum(v)/v.length;o.grupos[k]={n:v.length,m,s:Math.sqrt(sum(v.map(z=>(z-m)*(z-m)))/(v.length-1))};}}
+ const G=o.grupos;if(G['do > di']&&G['do < di']){const p=G['do > di'],q=G['do < di'];o.welch=(p.m-q.m)/Math.sqrt(p.s*p.s/p.n+q.s*q.s/q.n);}
+ return o;}
+const F=(v,d)=>v.toFixed(d).replace('.',',');
+function relatorio(o){
+ const L=[];L.push('RESULTADOS — configuração: '+o.cfg+' | pontos ativos: '+o.n+' de '+o.rows.length+' | σ leitura = '+F(o.sig,2)+' mm');
+ if(!o.ok){L.push('\nSão necessários pelo menos 3 pontos ativos para a regressão.');return L.join('\n');}
+ L.push('\n1) REGRESSÃO LINEAR (mínimos quadrados):  1/di = a·(1/do) + b');
+ L.push('   a = '+F(o.a,4)+' ± '+F(o.sa,4)+'      b = '+F(o.b,4)+' ± '+F(o.sb,4)+' m⁻¹');
+ L.push('   R² = '+F(o.r2,5)+'      s_y = '+F(o.sres,4)+' m⁻¹      cov(a,b) = '+o.cov.toExponential(2));
+ L.push('\n2) ESTIMATIVAS DE f A PARTIR DOS COEFICIENTES');
+ L.push('   f1 = 1/b  = '+F(o.f1,4)+' ± '+F(o.u1,4)+' m   (1º foco)');
+ L.push('   f2 = -a/b = '+F(o.f2,4)+' ± '+F(o.u2,4)+' m   (2º foco)');
+ L.push('   f = média ± desvio padrão = ('+F(o.fm,3)+' ± '+F(o.fs,3)+') m');
+ L.push('   f1 × f2: '+(o.compat?'compatíveis (≤ 2σ).':'DISCREPANTES (> 2σ) → indício de erro sistemático.'));
+ L.push('\n3) ESTATÍSTICA DOS PONTOS  f_i = 1/(1/do + 1/di)');
+ L.push('   média f̄ = '+F(o.fbar,4)+' m   desvio padrão s = '+F(o.s,4)+' m');
+ L.push('   Coeficiente de variação CV = '+F(o.cv,2)+' %');
+ L.push('   Erro padrão da média s_m = '+F(o.sm,4)+' m   (erro aleatório)');
+ L.push('   IC 95 %: f̄ ± '+F(o.U,4)+' m  (t = '+F(o.t,3)+', '+(o.n-1)+' g.l.)');
+ L.push('   σ instrumental médio = '+F(o.sinst,4)+' m   → s/σ = '+F(o.razao,1));
+ L.push('\n4) ERROS SISTEMÁTICOS × ALEATÓRIOS');
+ if(o.es!==undefined)L.push('   f nominal = '+F(o.fnom,4)+' m → erro sistemático = '+(o.es>=0?'+':'')+F(o.es,4)+' m ('+(o.esr>=0?'+':'')+F(o.esr,2)+' %)');
+ if(o.es!==undefined){const e=v=>{const p=(v-o.fnom)/o.fnom*100;return (p>=0?'+':'')+F(p,2)+' %';};L.push('   Desvio em relação ao nominal:  f1 '+e(o.f1)+' | f2 '+e(o.f2)+' | f (média f1,f2) '+e(o.fm)+' | f̄ dos pontos '+e(o.fbar));}
+ else L.push('   f nominal não informado (preencha no painel para calcular o erro sistemático).');
+ L.push('   Erro aleatório (s_m) = '+F(o.sm,4)+' m');
+ for(const k in o.grupos){const g=o.grupos[k];L.push('   '+k+': n = '+g.n+', f̄ = '+F(g.m,4)+' m, s = '+F(g.s,4)+' m, CV = '+F(g.s/g.m*100,2)+' %');}
+ if(o.welch!==undefined)L.push('   t de Welch entre configurações = '+F(o.welch,1)+' → '+(Math.abs(o.welch)>2?'diferença significativa: viés sistemático dependente de do/di.':'sem diferença significativa.'));
+ L.push('\nRESULTADO FINAL:  f = ('+F(o.fm,3)+' ± '+F(o.fs,3)+') m');
+ return L.join('\n');}
+//CALC_END
+const PAPEL='#FFF3E0',MAJ='#E07A3C',MIN='#F2C29B';
+function niceStep(r,t){const raw=r/t,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return(m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+function nice(lo,hi){if(!(hi-lo>1e-12))hi=lo+1;const st=niceStep(hi-lo,6);return{lo:Math.floor(lo/st+1e-9)*st,hi:Math.ceil(hi/st-1e-9)*st,st};}
+function dec(st){return Math.max(0,-Math.floor(Math.log10(st)+1e-9));}
+function frame(cv,title,xl,yl,X,Y,cats){
+ cv.width=1000;cv.height=640;const c=cv.getContext('2d');
+ const Lm=115,Rm=30,Tm=62,Bm=90,pw=1000-Lm-Rm,ph=640-Tm-Bm;
+ c.fillStyle='#fff';c.fillRect(0,0,1000,640);c.fillStyle=PAPEL;c.fillRect(Lm,Tm,pw,ph);
+ const sx=v=>Lm+(v-X.lo)/(X.hi-X.lo)*pw,sy=v=>Tm+ph-(v-Y.lo)/(Y.hi-Y.lo)*ph;
+ const nx=Math.round((X.hi-X.lo)/X.st),ny=Math.round((Y.hi-Y.lo)/Y.st);
+ c.lineWidth=1;c.strokeStyle=MIN;
+ if(!cats)for(let i=0;i<=nx*5;i++){const x=sx(X.lo+i*X.st/5);c.beginPath();c.moveTo(x,Tm);c.lineTo(x,Tm+ph);c.stroke();}
+ for(let i=0;i<=ny*5;i++){const y=sy(Y.lo+i*Y.st/5);c.beginPath();c.moveTo(Lm,y);c.lineTo(Lm+pw,y);c.stroke();}
+ c.lineWidth=1.8;c.strokeStyle=MAJ;
+ if(!cats)for(let i=0;i<=nx;i++){const x=sx(X.lo+i*X.st);c.beginPath();c.moveTo(x,Tm);c.lineTo(x,Tm+ph);c.stroke();}
+ for(let i=0;i<=ny;i++){const y=sy(Y.lo+i*Y.st);c.beginPath();c.moveTo(Lm,y);c.lineTo(Lm+pw,y);c.stroke();}
+ c.fillStyle='#000';c.font='19px Arial';c.textAlign='center';
+ if(!cats)for(let i=0;i<=nx;i++){const v=X.lo+i*X.st;c.fillText(v.toFixed(dec(X.st)),sx(v),Tm+ph+26);}
+ c.textAlign='right';for(let i=0;i<=ny;i++){const v=Y.lo+i*Y.st;c.fillText(v.toFixed(dec(Y.st)),Lm-8,sy(v)+6);}
+ c.textAlign='center';c.font='bold 25px Arial';c.fillText(title,Lm+pw/2,38);
+ c.font='21px Arial';c.fillText(xl,Lm+pw/2,628);c.save();c.translate(26,Tm+ph/2);c.rotate(-Math.PI/2);c.fillText(yl,0,0);c.restore();
+ return{c,sx,sy,Lm,Tm,pw,ph};}
+function dot(c,x,y,hollow,sq){c.lineWidth=2;c.strokeStyle=hollow?'#808080':'#000';c.fillStyle=hollow?PAPEL:'#000';c.beginPath();if(sq)c.rect(x-6,y-6,12,12);else c.arc(x,y,6.5,0,7);c.fill();c.stroke();}
+function msg(cv,t){cv.width=1000;cv.height=640;const c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,1000,640);c.fillStyle='#000';c.font='24px Arial';c.textAlign='center';c.fillText(t,500,320);}
+function gReta(cv,o){
+ if(!o.ok)return msg(cv,'Mínimo de 3 pontos ativos');
+ const xs=o.x.filter((_,i)=>o.at[i]);const X=nice(0,Math.max(...xs)*1.03);
+ const ys=[o.b,...o.y.filter((_,i)=>o.at[i])];const Y=nice(0,Math.max(...ys)*1.03);
+ const f=frame(cv,'1/di × 1/do (mínimos quadrados)','1/do (1/m)','1/di (1/m)',X,Y);const c=f.c;
+ c.save();c.beginPath();c.rect(f.Lm,f.Tm,f.pw,f.ph);c.clip();
+ c.strokeStyle='#000';c.lineWidth=3;c.beginPath();c.moveTo(f.sx(X.lo),f.sy(o.a*X.lo+o.b));c.lineTo(f.sx(X.hi),f.sy(o.a*X.hi+o.b));c.stroke();c.restore();
+ o.x.forEach((x,i)=>dot(c,f.sx(x),f.sy(o.y[i]),!o.at[i]));
+ const fs=fSim(),sd=SIM.do,sxv=1/sd,syv=1/fs-1/sd,simOn=syv>0;
+ if(simOn){c.save();c.beginPath();c.rect(f.Lm,f.Tm,f.pw,f.ph);c.clip();const px=f.sx(sxv),py=f.sy(syv);c.fillStyle='#fff';c.strokeStyle='#B00020';c.lineWidth=3.5;c.beginPath();c.moveTo(px,py-11);c.lineTo(px+11,py);c.lineTo(px,py+11);c.lineTo(px-11,py);c.closePath();c.fill();c.stroke();c.restore();}
+ const bh=simOn?92:66;
+ c.fillStyle='rgba(255,243,224,.95)';c.strokeStyle='#000';c.lineWidth=1.5;c.fillRect(f.Lm+f.pw-330,f.Tm+12,318,bh);c.strokeRect(f.Lm+f.pw-330,f.Tm+12,318,bh);
+ if(simOn){c.fillStyle='#B00020';c.font='18px Arial';c.textAlign='left';c.fillText('◇ posição do simulador (lente ideal)',f.Lm+f.pw-320,f.Tm+90);}
+ c.fillStyle='#000';c.font='18px Arial';c.textAlign='left';
+ c.fillText('y = '+F(o.a,4)+' x + '+F(o.b,4),f.Lm+f.pw-320,f.Tm+38);c.fillText('R² = '+F(o.r2,5),f.Lm+f.pw-320,f.Tm+64);}
+function gRes(cv,o){
+ if(!o.ok)return msg(cv,'Mínimo de 3 pontos ativos');
+ const xs=o.x.filter((_,i)=>o.at[i]),rs=o.res.filter((_,i)=>o.at[i]);
+ const m=Math.max(...rs.map(Math.abs),1e-9)*1.15;
+ const X=nice(Math.min(...xs)*0.97,Math.max(...xs)*1.03),Y=nice(-m,m);
+ const f=frame(cv,'Resíduos do ajuste','1/do (1/m)','resíduo (1/m)',X,Y);const c=f.c;
+ c.strokeStyle='#000';c.lineWidth=2.5;c.beginPath();c.moveTo(f.Lm,f.sy(0));c.lineTo(f.Lm+f.pw,f.sy(0));c.stroke();
+ o.x.forEach((x,i)=>{if(o.at[i])dot(c,f.sx(x),f.sy(o.res[i]),false,true);});}
+function gFi(cv,o){
+ if(!o.ok)return msg(cv,'Mínimo de 3 pontos ativos');
+ const v=o.fi.filter((_,i)=>o.at[i]);let lo=Math.min(...v,o.fbar-o.s),hi=Math.max(...v,o.fbar+o.s);if(o.fnom>0){lo=Math.min(lo,o.fnom);hi=Math.max(hi,o.fnom);}
+ const p=(hi-lo)*0.1||0.001;const X=nice(0,o.rows.length+1),Y=nice(lo-p,hi+p);
+ const f=frame(cv,'f_i de cada ponto e média','Nº do ponto','f_i (m)',X,Y);const c=f.c;
+ c.fillStyle='rgba(224,122,60,.18)';c.fillRect(f.Lm,f.sy(o.fbar+o.s),f.pw,f.sy(o.fbar-o.s)-f.sy(o.fbar+o.s));
+ c.strokeStyle='#000';c.lineWidth=2.5;c.beginPath();c.moveTo(f.Lm,f.sy(o.fbar));c.lineTo(f.Lm+f.pw,f.sy(o.fbar));c.stroke();
+ if(o.fnom>0){c.setLineDash([10,7]);c.lineWidth=2;c.beginPath();c.moveTo(f.Lm,f.sy(o.fnom));c.lineTo(f.Lm+f.pw,f.sy(o.fnom));c.stroke();c.setLineDash([]);}
+ o.fi.forEach((y,i)=>{if(o.at[i])dot(c,f.sx(i+1),f.sy(y),false);});}
+function gBar(cv,o){
+ if(!o.ok)return msg(cv,'Mínimo de 3 pontos ativos');
+ const v=[o.f1,o.f2,o.fbar],e=[o.u1,o.u2,o.sm],em=Math.max(...e);
+ let lo=Math.max(Math.min(...v)-em*8,0),hi=Math.max(...v)*1.03+em;if(o.fnom>0){lo=Math.min(lo,o.fnom*0.98);hi=Math.max(hi,o.fnom*1.02);}
+ const X={lo:0,hi:3,st:1},Y=nice(lo,hi);
+ const f=frame(cv,'f1, f2 e f̄ dos pontos','','f (m)',X,Y,true);const c=f.c;
+ ['f1 (1/b)','f2 (−a/b)','f̄ dos f_i'].forEach((t,i)=>{const x0=f.sx(i+0.2),x1=f.sx(i+0.8),y0=f.sy(Math.max(Y.lo,0)),y1=f.sy(v[i]);
+  c.fillStyle='#404040';c.fillRect(x0,y1,x1-x0,y0-y1);c.strokeStyle='#000';c.lineWidth=2;c.strokeRect(x0,y1,x1-x0,y0-y1);
+  const xm=(x0+x1)/2;c.beginPath();c.moveTo(xm,f.sy(v[i]-e[i]));c.lineTo(xm,f.sy(v[i]+e[i]));c.moveTo(xm-10,f.sy(v[i]-e[i]));c.lineTo(xm+10,f.sy(v[i]-e[i]));c.moveTo(xm-10,f.sy(v[i]+e[i]));c.lineTo(xm+10,f.sy(v[i]+e[i]));c.stroke();
+  c.fillStyle='#000';c.font='20px Arial';c.textAlign='center';c.fillText(t,xm,f.Tm+f.ph+30);});
+ if(o.fnom>0){c.setLineDash([10,7]);c.lineWidth=2;c.beginPath();c.moveTo(f.Lm,f.sy(o.fnom));c.lineTo(f.Lm+f.pw,f.sy(o.fnom));c.stroke();c.setLineDash([]);}}
+
+const $=id=>document.getElementById(id);
+let SIM={do:1.0},LAST=null,tmr=null;
+function fSim(){const fn=parseFloat($('fnom').value)||0;return fn>0?fn:(LAST&&LAST.ok?LAST.fbar:0.125);}
+function drawSim(){
+ const cv=$('c5');cv.width=1000;cv.height=460;const c=cv.getContext('2d'),W=1000,H=460,ay=250,hp=70;
+ const f=fSim();let d0=SIM.do;if(Math.abs(d0-f)<0.003)d0=f+0.003;
+ const di=1/(1/f-1/d0),m=-di/d0,virt=di<0;
+ const extL=virt?Math.abs(di):d0,extR=virt?Math.max(f*2,0.2):Math.min(di,3);
+ const s=(W-90)/(extL+extR),Lx=45+extL*s;
+ const X=d=>Lx+d*s,xo=X(-d0),yo=ay-hp,Fl=X(-f),Fr=X(f);
+ c.fillStyle='#FFF3E0';c.fillRect(0,0,W,H);c.strokeStyle='#F2C29B';c.lineWidth=1;
+ for(let x=0;x<=W;x+=20){c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke();}for(let y=0;y<=H;y+=20){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke();}
+ c.save();c.beginPath();c.rect(0,0,W,H);c.clip();
+ c.strokeStyle='#000';c.lineWidth=1.5;c.beginPath();c.moveTo(0,ay);c.lineTo(W,ay);c.stroke();
+ // lente
+ c.fillStyle='rgba(120,180,230,.45)';c.strokeStyle='#1F3864';c.lineWidth=3;c.beginPath();c.ellipse(Lx,ay,14,150,0,0,7);c.fill();c.stroke();
+ // focos
+ c.fillStyle='#000';c.font='bold 17px Arial';c.textAlign='center';
+ [[Fl,'F'],[Fr,"F'"]].forEach(([x,t])=>{c.beginPath();c.arc(x,ay,4.5,0,7);c.fill();c.fillText(t,x,ay+24);});
+ // raios
+ const ray=(pts,col,dash)=>{c.strokeStyle=col;c.lineWidth=2.2;c.setLineDash(dash||[]);c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke();c.setLineDash([]);};
+ const lineY=(x1,y1,x2,y2,x)=>y1+(y2-y1)*(x-x1)/(x2-x1);
+ const R=W+400;
+ // 1: paralelo -> F'
+ ray([[xo,yo],[Lx,yo],[R,lineY(Lx,yo,Fr,ay,R)]],'#B00020');
+ // 2: pelo centro
+ ray([[xo,yo],[R,lineY(xo,yo,Lx,ay,R)]],'#0B6E2E');
+ // 3: pelo foco objeto -> sai paralelo
+ const y3=lineY(Fl,ay,xo,yo,Lx);ray([[xo,yo],[Lx,y3],[R,y3]],'#1F3864');
+ // imagem
+ const xi=X(di),yi=ay-m*hp;
+ if(virt){ray([[Lx,yo],[xi,yi]],'#B00020',[6,5]);ray([[Lx,ay],[xi,yi]],'#0B6E2E',[6,5]);ray([[Lx,y3],[xi,yi]],'#1F3864',[6,5]);}
+ // anteparo
+ if(!virt){c.strokeStyle='#333';c.lineWidth=6;c.beginPath();c.moveTo(xi,ay-190);c.lineTo(xi,ay+190);c.stroke();}
+ const seta=(x,y,col,dash)=>{c.strokeStyle=col;c.fillStyle=col;c.lineWidth=5;c.setLineDash(dash||[]);c.beginPath();c.moveTo(x,ay);c.lineTo(x,y);c.stroke();c.setLineDash([]);const u=y<ay?1:-1;c.beginPath();c.moveTo(x,y);c.lineTo(x-9,y+u*16);c.lineTo(x+9,y+u*16);c.closePath();c.fill();};
+ seta(xo,yo,'#E07A3C');seta(xi,yi,virt?'rgba(0,0,0,.55)':'#000',virt?[6,5]:null);
+ c.restore();
+ c.fillStyle='#000';c.font='bold 17px Arial';c.textAlign='center';
+ const cl=x=>Math.max(60,Math.min(W-60,x));
+ c.fillText('objeto / fonte',cl(xo),Math.min(H-8,ay+hp+34));
+ c.fillText('lente',cl(Lx),30);
+ c.fillText(virt?'imagem virtual':(d0>2*f?'sensor (câmera)':'tela / anteparo'),cl(xi),virt?ay+hp+34:Math.max(24,ay-200));
+ // texto
+ const aum=Math.abs(m);let tipo=virt?'virtual':'real',orient=m<0?'invertida':'direita',tam=Math.abs(aum-1)<0.06?'do mesmo tamanho':(aum>1?'ampliada':'reduzida');
+ let uso=virt?'Lupa (do &lt; f)':(Math.abs(d0-2*f)<0.012?'Cópia 1:1 (do ≈ 2f)':(d0>2*f?'Máquina fotográfica (do > 2f)':'Projetor de cinema (f &lt; do &lt; 2f)'));
+ $('simout').innerHTML='<b>'+uso+'</b><br>f = '+F(f,3)+' m · do = '+F(d0,3)+' m · di = '+(di>50?'∞':F(di,3))+' m · ampliação m = −di/do = '+(Math.abs(m)>500?'muito grande':F(m,2))+'<br>Imagem '+tipo+', '+orient+', '+tam+'. Raios: <span style="color:#B00020">paralelo→F\'</span>, <span style="color:#0B6E2E">pelo centro</span>, <span style="color:#1F3864">pelo foco→paralelo</span>.'+(di>3&&!virt?' (imagem fora da figura, muito distante)':'');
+ $('dov').textContent=F(SIM.do,3);
+ if(LAST)gReta($('c1'),LAST);}
+function setDo(v){SIM.do=Math.max(0.06,Math.min(1.2,v));$('dosl').value=SIM.do;drawSim();}
+$('dosl').addEventListener('input',()=>{stop();setDo(parseFloat($('dosl').value));});
+document.querySelectorAll('button.pre').forEach(b=>b.addEventListener('click',()=>{stop();setDo(parseFloat(b.dataset.do));$('c5').scrollIntoView({behavior:'smooth',block:'center'});}));
+function stop(){if(tmr){clearInterval(tmr);tmr=null;$('play').textContent='▶ Varrer';}}
+$('play').addEventListener('click',()=>{if(tmr){stop();return;}$('play').textContent='⏸ Pausar';let dir=-1;if(SIM.do<=0.07)SIM.do=1.2;tmr=setInterval(()=>{let v=SIM.do+dir*0.006;if(v<=0.07){dir=1;}if(v>=1.2){dir=-1;}setDo(v);},40);});
+// ---- estado e interface
+let rows=INIT.map(r=>({...r}));
+function build(){const tb=$('tb').querySelector('tbody');tb.innerHTML='';
+ rows.forEach((r,i)=>{const tr=document.createElement('tr');tr.id='r'+i;
+  tr.innerHTML='<td>'+(i+1)+'</td><td><input type="checkbox" '+(r.usar?'checked':'')+' data-i="'+i+'" data-k="usar"></td>'+
+  '<td><input type="number" step="0.001" value="'+r.do+'" data-i="'+i+'" data-k="do"></td>'+
+  '<td><input type="number" step="0.001" value="'+r.di+'" data-i="'+i+'" data-k="di"></td>'+
+  '<td id="x'+i+'"></td><td id="y'+i+'"></td><td id="f'+i+'"></td><td id="g'+i+'"></td><td id="e'+i+'"></td>'+
+  '<td class="noprint"><button data-del="'+i+'" style="width:auto;margin:0;padding:1px 7px">×</button></td>';
+  tb.appendChild(tr);});
+ tb.querySelectorAll('input').forEach(el=>el.addEventListener('input',ev=>{const i=+el.dataset.i,k=el.dataset.k;rows[i][k]=k==='usar'?el.checked:parseFloat(el.value);update();}));
+ tb.querySelectorAll('button[data-del]').forEach(b=>b.addEventListener('click',()=>{rows.splice(+b.dataset.del,1);build();update();}));}
+function update(){
+ const sig=parseFloat($('sig').value)||1,fn=parseFloat($('fnom').value)||0;
+ const o=calc(rows,$('cfg').value,sig,fn);
+ $('txt').textContent='RELATÓRIO — DISTÂNCIA FOCAL DE LENTE CONVERGENTE\nAlunos: '+ALUNOS+'\n'+'='.repeat(74)+'\n'+relatorio(o);
+ LAST=o;gRes($('c2'),o);gFi($('c3'),o);gBar($('c4'),o);drawSim();
+ rows.forEach((r,i)=>{const ok=isFinite(o.x[i])&&isFinite(o.y[i]);
+  $('x'+i).textContent=ok?o.x[i].toFixed(4):'-';$('y'+i).textContent=ok?o.y[i].toFixed(4):'-';
+  $('f'+i).textContent=ok?o.fi[i].toFixed(4):'-';$('g'+i).textContent=o.g[i]+(o.at[i]?'':' (oculto)');
+  $('e'+i).textContent=o.ok&&o.at[i]?(o.res[i]>=0?'+':'')+o.res[i].toFixed(4):'-';
+  $('r'+i).className=o.at[i]?'':'off';});}
+$('cfg').addEventListener('change',update);$('sig').addEventListener('input',update);$('fnom').addEventListener('input',update);
+$('add').addEventListener('click',()=>{rows.push({do:0.2,di:0.3,usar:true});build();update();});
+$('rst').addEventListener('click',()=>{rows=INIT.map(r=>({...r}));$('cfg').value='Todos';$('sig').value=1;$('fnom').value='0.125';build();update();});
+$('prt').addEventListener('click',()=>window.print());
+build();update();
+</script></body></html>
